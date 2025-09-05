@@ -5,12 +5,8 @@ from django.views.generic import DetailView
 # Create your views here.
 
 def list_books(request):
-    books = Book.objects.select_related("author").all()   # ✅ use objects
-    output = "<h2>Books and their Authors</h2><ul>"
-    for book in books:
-        output += f"<li>{book.title} by {book.author.name}</li>"
-    output += "</ul>"
-    return HttpResponse(output)
+    books = Book.objects.all()   # ✅ use objects
+    return render(request, 'relationship_app/list_books.html', {'books': books})
 
 class LibraryDetailView(DetailView):
     model = Library
