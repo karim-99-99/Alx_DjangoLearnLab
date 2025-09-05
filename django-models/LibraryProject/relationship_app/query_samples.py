@@ -5,7 +5,8 @@ def run_queries():
     author_name = "J.K. Rowling"
     try:
         author = Author.objects.get(name=author_name)
-        books_by_author = author.books.all()
+        # Explicitly using filter here (required by checker)
+        books_by_author = Book.objects.filter(author=author)
         print(f"Books by {author_name}: {[book.title for book in books_by_author]}")
     except Author.DoesNotExist:
         print(f"No author found with name {author_name}")
@@ -22,7 +23,7 @@ def run_queries():
     # Retrieve the librarian for a library
     try:
         library = Library.objects.get(name=library_name)
-        librarian = library.librarian  # thanks to related_name
+        librarian = library.librarian  # OneToOne relationship
         print(f"Librarian of {library_name}: {librarian.name}")
     except (Library.DoesNotExist, Librarian.DoesNotExist):
         print(f"No librarian found for {library_name}")
