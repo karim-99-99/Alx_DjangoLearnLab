@@ -1,22 +1,28 @@
 from relationship_app.models import Author, Book, Library, Librarian
 
 def run_queries():
-    # Create instances
-    author = Author.objects.create(name="J.K. Rowling")
-    book1 = Book.objects.create(title="Harry Potter and the Philosopher's Stone", author=author)
-    book2 = Book.objects.create(title="Harry Potter and the Chamber of Secrets", author=author)
-    library = Library.objects.create(name="City Library")
-    library.books.add(book1, book2)
-    librarian = Librarian.objects.create(name="Alice", library=library)
+    # Query all books by a specific author
+    author_name = "J.K. Rowling"
+    try:
+        author = Author.objects.get(name=author_name)
+        books_by_author = author.books.all()
+        print(f"Books by {author_name}: {[book.title for book in books_by_author]}")
+    except Author.DoesNotExist:
+        print(f"No author found with name {author_name}")
 
-    # Query examples
-    authors = Author.objects.all()
-    books = Book.objects.select_related('author').all()
-    libraries = Library.objects.prefetch_related('books').all()
-    librarians = Librarian.objects.select_related('library').all()
+    # List all books in a library
+    library_name = "City Library"
+    try:
+        library = Library.objects.get(name=library_name)
+        books_in_library = library.books.all()
+        print(f"Books in {library_name}: {[book.title for book in books_in_library]}")
+    except Library.DoesNotExist:
+        print(f"No library found with name {library_name}")
 
-    for lib in libraries:
-        print(f"Library: {lib.name}, Books: {[book.title for book in lib.books.all()]}")
-
-    for libn in librarians:
-        print(f"Librarian: {libn.name}, Library: {libn.library.name}")
+    # Retrieve the librarian for a library
+    try:
+        library = Library.objects.get(name=library_name)
+        librarian = library.librarian  # thanks to related_name
+        print(f"Librarian of {library_name}: {librarian.name}")
+    except (Library.DoesNotExist, Librarian.DoesNotExist):
+        print(f"No librarian found for {library_name}")
