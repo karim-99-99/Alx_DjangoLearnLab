@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Book , Library
-
+from django.views.generic import DetailView
 # Create your views here.
 
 def list_books(request):
-    books = Book.object.select_related('author').all()
+    books = Book.objects.select_related("author").all()   # ✅ use objects
     output = "<h2>Books and their Authors</h2><ul>"
     for book in books:
         output += f"<li>{book.title} by {book.author.name}</li>"
@@ -14,6 +14,5 @@ def list_books(request):
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'relationship/library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
-    
