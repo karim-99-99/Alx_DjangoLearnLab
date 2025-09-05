@@ -20,4 +20,3 @@ def run_queries():
 
     for libn in librarians:
         print(f"Librarian: {libn.name}, Library: {libn.library.name}")
-        
