@@ -41,3 +41,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             ("can_delete", "Can Delete User"),
             ("can_create", "Can Create User"),
         ]
+
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    publication_year = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.title} by {self.author}"
