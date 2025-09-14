@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Are you sure you want to delete {{ user.email }}?</h2>
+  <form method="post">
+    {% csrf_token %}  <!-- ✅ CSRF protection -->
+    <button type="submit">Yes, delete</button>
+  </form>
+  <a href="{% url 'user_list' %}">Cancel</a>
+{% endblock %}
