@@ -1,6 +1,9 @@
 from django import forms
 from .models import Book, CustomUser
 
+class ExampleForm(forms.Form):
+    name = forms.CharField(max_length=100)
+
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
