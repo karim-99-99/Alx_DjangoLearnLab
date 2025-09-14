@@ -1,0 +1,12 @@
+
+<!-- form_example.html -->
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label for="title">Title</label>
+  <input id="title" name="title" required>
+  <button type="submit">Save</button>
+</form>
+<p>{{ book.title }}</p>
+<p>{{ book.cover_image.url }}</p>
+<img src="{{ book.cover_image.url }}" alt="{{ book.title }}">

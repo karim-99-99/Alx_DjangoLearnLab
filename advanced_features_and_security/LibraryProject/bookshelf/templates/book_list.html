@@ -1,0 +1,16 @@
+<!-- book_list.html -->
+{% extends "base.html" %}
+{% block content %}
+<h1>Books</h1>
+<ul>
+  {% for book in books %}
+    <li>
+      <!-- Django auto-escapes variables by default -->
+      <a href="{% url 'book_detail' book.id %}">{{ book.title }}</a>
+      by {{ book.author|default:"Unknown" }}
+    </li>
+  {% empty %}
+    <li>No books yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
