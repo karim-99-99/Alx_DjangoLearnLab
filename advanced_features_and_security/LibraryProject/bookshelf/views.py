@@ -105,3 +105,22 @@ def delete_book(request, book_id):
         messages.success(request, "Book deleted successfully ❌")
         return redirect("book_list")
     return render(request, "confirm_delete_book.html", {"book": book})
+
+
+def example_form_view(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Normally you’d process the data here
+            name = form.cleaned_data['name']
+            message = form.cleaned_data['message']
+            return render(request, "bookshelf/form_example.html", {
+                "form": form,
+                "success": True,
+                "name": name,
+                "message": message,
+            })
+    else:
+        form = ExampleForm()
+
+    return render(request, "bookshelf/form_example.html", {"form": form})
