@@ -9,7 +9,7 @@ class BookListView(generics.ListCreateAPIView):
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer):
+    def CreateView(self, serializer):
         serializer.save(owner=self.request.user)  # attach logged-in user as owner
 
 # Retrieve details of a single book
@@ -19,13 +19,13 @@ class BookDetailView(generics.RetrieveAPIView):
     permission_classes = [permissions.AllowAny]
 
 # Update an existing book
-class UpdateBookView(generics.UpdateAPIView):
+class UpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
 # Delete a book
-class DeleteBookView(generics.DestroyAPIView):
+class DeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsOwnerOrReadOnly]
