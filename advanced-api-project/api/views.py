@@ -3,6 +3,7 @@ from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsOwnerOrReadOnly 
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework" 
 # ✅ List all books
 class ListView(generics.ListAPIView):
     queryset = Book.objects.all()
