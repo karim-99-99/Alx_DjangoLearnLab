@@ -132,5 +132,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 import os
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'templates')]
 
-LOGIN_REDIRECT_URL = '/posts/'
+LOGIN_REDIRECT_URL = '/profile/'
 LOGOUT_REDIRECT_URL = '/base/'
