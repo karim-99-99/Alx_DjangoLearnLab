@@ -18,7 +18,7 @@ class Post(models.Model):
         return reverse('post_detail' , kwargs={'pk' : self.pk})
 
 
-class Comment (models.Model):
+class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete= models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
