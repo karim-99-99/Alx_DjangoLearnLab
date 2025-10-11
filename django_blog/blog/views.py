@@ -7,6 +7,7 @@ from .models import Post  , Comment
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.urls import reverse
 def home(request):
     return render(request, 'blog/base.html')
 
@@ -143,3 +144,22 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
+
+
+# Create comment (only for logged-in users)
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        # Attach the post and author automatically
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # After adding a comment, redirect to the post detail page
+        return reverse('post_detail', kwargs={'pk': self.object.post.pk})
