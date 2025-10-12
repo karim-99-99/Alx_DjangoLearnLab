@@ -11,6 +11,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now = True)
 
+    tags = models.ManyToManyField('Tag' , related_name='posts' , blank=True)
     def __str__(self):
         return self.title
     
@@ -27,3 +28,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'comment by {self.author.username} on {self.post.title} '
+    
+
+class Tag(models.Model):
+    title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name

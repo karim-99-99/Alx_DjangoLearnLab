@@ -22,10 +22,10 @@ urlpatterns = [
 
 
   # 💬 Comments
-    path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
-    path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
-    path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
-]
+    # path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
+    # path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
+    # path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+
     # Authentication
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
