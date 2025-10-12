@@ -42,5 +42,6 @@ path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comme
 # Tag and search URLs
 path('tags/<str:tag_name>/', views.posts_by_tag, name='posts-by-tag'),
 path('search/', views.search, name='search'),
+path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts-by-tag'),
 
 ]
