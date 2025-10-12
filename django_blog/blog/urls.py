@@ -38,4 +38,9 @@ urlpatterns = [
 # Comment URLs
 path('comments/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='comment-update'),
 path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+
+# Tag and search URLs
+path('tags/<str:tag_name>/', views.posts_by_tag, name='posts-by-tag'),
+path('search/', views.search, name='search'),
+
 ]

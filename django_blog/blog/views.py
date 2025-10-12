@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin , UserPassesTestMixin
 from django.views.generic import ListView , DetailView ,CreateView , UpdateView , DeleteView
 from .forms import RegisterForm , CommentForm
-from .models import Post  , Comment
+from .models import Post  , Comment , Tag
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.urls import reverse
+from django.db.models import Q
 def home(request):
     return render(request, 'blog/base.html')
 
@@ -163,3 +164,25 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         # After adding a comment, redirect to the post detail page
         return reverse('post_detail', kwargs={'pk': self.object.post.pk})
+    
+
+
+
+def search(request):
+    query = request.GET.get('q')
+    posts = Post.objects.all()
+
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
+def posts_by_tag(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = Post.objects.filter(tags=tag)
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
