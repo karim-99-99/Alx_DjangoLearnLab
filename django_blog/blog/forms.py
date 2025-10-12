@@ -22,12 +22,16 @@ class RegisterForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     tags = forms.CharField(
         required=False,
-        help_text="Add tags separated by commas (e.g. Django, Python, Web)"
+        help_text="Add tags separated by commas (e.g. Django, Python, Web)",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter tags separated by commas'})
     )
 
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(),  # ✅ Required by your task
+        }
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -40,8 +44,6 @@ class PostForm(forms.ModelForm):
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 instance.tags.add(tag)
         return instance
-    
-
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -63,3 +65,15 @@ class CommentForm(forms.ModelForm):
         if not content or content.strip() == "":
             raise forms.ValidationError("Comment cannot be empty.")
         return content
+
+
+
+class TagWidget(forms.TextInput):
+    """
+    Custom widget for entering tags as a comma-separated list.
+    """
+    def __init__(self, attrs=None):
+        default_attrs = {'placeholder': 'Enter tags separated by commas (e.g. Django, Python, Web)'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(attrs=default_attrs)
