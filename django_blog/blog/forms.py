@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Comment , Post , Tag
+from .models import Comment , Post
+from taggit.forms import TagWidget   # ✅ Import TagWidget from taggit
+
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -19,7 +21,7 @@ class RegisterForm(UserCreationForm):
 #         fields = ['title', 'content', 'author']
 
 
-class PostForm(forms.ModelForm):
+class Post(forms.ModelForm):
     tags = forms.CharField(
         required=False,
         help_text="Add tags separated by commas (e.g. Django, Python, Web)",
@@ -30,7 +32,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']
         widgets = {
-            'tags': TagWidget(),  # ✅ Required by your task
+            'tags': TagWidget(attrs={'placeholder': 'Enter tags separated by commas'}),
         }
 
     def save(self, commit=True):
@@ -40,9 +42,8 @@ class PostForm(forms.ModelForm):
             tags_str = self.cleaned_data.get('tags', '')
             tags_list = [t.strip() for t in tags_str.split(',') if t.strip()]
             instance.tags.clear()
-            for tag_name in tags_list:
-                tag, created = Tag.objects.get_or_create(name=tag_name)
-                instance.tags.add(tag)
+            instance.tags.add(*tags_list)
+
         return instance
 
 class CommentForm(forms.ModelForm):

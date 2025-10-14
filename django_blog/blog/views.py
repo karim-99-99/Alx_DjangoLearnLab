@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin , UserPassesTestMixin
 from django.views.generic import ListView , DetailView ,CreateView , UpdateView , DeleteView
 from .forms import RegisterForm , CommentForm
-from .models import Post  , Comment , Tag
+from .models import Post  , Comment 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
