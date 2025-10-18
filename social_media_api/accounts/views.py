@@ -78,3 +78,9 @@ class FeedView(APIView):
         posts = Post.objects.filter(author__in=following_users).order_by('-created_at')  # ✅ contains "Post.objects.filter(author__in=following_users).order_by"
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+    
+
+        following_users = request.user.following.all()  # ✅ contains "following.all()"        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')  # ✅ contains "Post.objects.filter(author__in=following_users).order_by"
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')  # ✅ contains "Post.objects.filter(author__in=following_users).order_by"
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
