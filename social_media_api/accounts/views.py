@@ -10,10 +10,11 @@ from .serializers import RegisterSerializer, UserSerializer
 
 User = get_user_model()
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = RegisterSerializer
+from .models import CustomUser
 
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterSerializer
 class LoginView(generics.GenericAPIView):
     serializer_class = UserSerializer
 
