@@ -42,11 +42,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',
     'rest_framework.authtoken',
-    'posts'
+    'posts',
+    'notifications',
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,13 +82,15 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+import dj_database_url  # pip install dj-database-url
 
+DATABASES = {
+    "default": dj_database_url.config(
+        env="DATABASE_URL",
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -138,3 +144,54 @@ rest_framework = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+
+import os
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+
+# helper
+def env(k, default=None):
+    v = os.environ.get(k, default)
+    if v is None:
+        raise ImproperlyConfigured(f"Missing env var {k}")
+    return v
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DEBUG = env("DJANGO_DEBUG", "False") == "True"
+
+# set host(s) — include domain and IPs
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", "").split(",")  # e.g. "example.com,www.example.com"
+
+# secret
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+
+
+# security
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+# if behind HTTPS load balancer set True and ensure SECURE_PROXY_SSL_HEADER configured
+SECURE_SSL_REDIRECT = env("DJANGO_SECURE_SSL_REDIRECT", "True") == "True"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+# if using a proxy (Heroku, etc.)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

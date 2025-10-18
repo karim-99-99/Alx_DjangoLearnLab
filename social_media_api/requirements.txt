@@ -1,0 +1,10 @@
+Django>=4.2
+djangorestframework
+gunicorn
+psycopg2-binary            # for PostgreSQL
+whitenoise                 # (optional) serve static files
+boto3                      # if using S3
+django-storages            # if using S3
+python-dotenv or python-decouple  # env loading locally
+django-environ (optional)
+pip freeze > requirements.txt
