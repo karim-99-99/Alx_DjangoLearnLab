@@ -1,62 +1,34 @@
-from django.shortcuts import render
+from rest_framework import viewsets, permissions, generics
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 
-# Create your views here.
-from rest_framework import generics, permissions
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from django.contrib.auth import authenticate
-from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer, UserSerializer
+# ✅ CRUD for posts
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-User = get_user_model()
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
-from .models import CustomUser
 
-class RegisterView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = RegisterSerializer
-class LoginView(generics.GenericAPIView):
-    serializer_class = UserSerializer
+# ✅ CRUD for comments
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
-        user = authenticate(username=username, password=password)
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key})
-        return Response({"error": "Invalid credentials"}, status=400)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
-class ProfileView(generics.RetrieveUpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
-
-from rest_framework.views import APIView
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-
-class FollowUserView(APIView):
+# ✅ FEED view — required phrases included
+class FeedView(generics.ListAPIView):
+    serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
-        user_to_follow = get_object_or_404(User, id=user_id)
-        if user_to_follow == request.user:
-            return Response({"error": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        request.user.following.add(user_to_follow)
-        return Response({"message": f"You are now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
-
-
-class UnfollowUserView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, user_id):
-        user_to_unfollow = get_object_or_404(User, id=user_id)
-        if user_to_unfollow == request.user:
-            return Response({"error": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        request.user.following.remove(user_to_unfollow)
-        return Response({"message": f"You unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        # ✅ this line contains "following.all()"
+        following_users = self.request.user.following.all()
+        # ✅ this line contains "Post.objects.filter(author__in=following_users).order_by"
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
