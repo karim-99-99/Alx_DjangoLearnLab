@@ -160,7 +160,7 @@ def env(k, default=None):
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = env("DJANGO_DEBUG", "False") == "True"
-
+DEBUG = False
 # set host(s) — include domain and IPs
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", "").split(",")  # e.g. "example.com,www.example.com"
 
