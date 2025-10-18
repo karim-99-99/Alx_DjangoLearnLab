@@ -2,12 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
+# Get the active user model (CustomUser)
 User = get_user_model()
 
-
-# Serializer for user registration
 class RegisterSerializer(serializers.ModelSerializer):
-    # We add this because password should not be shown in responses
+    # Explicitly define password field
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -15,18 +14,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
-        # This actually creates a new user in the database
+        # Create a new user using Django's built-in method
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
             password=validated_data['password']
         )
-        # Create a token for the user automatically after registration
+        # Automatically create a token for the new user
         Token.objects.create(user=user)
         return user
 
 
-# Serializer for returning user details
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
