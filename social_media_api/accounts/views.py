@@ -6,6 +6,11 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework.views import APIView
 from .models import CustomUser
 from .serializers import RegisterSerializer, UserSerializer
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 
 User = get_user_model()
 
@@ -61,3 +66,15 @@ class UnfollowUserView(APIView):
             return Response({"error": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         request.user.following.remove(user_to_unfollow)
         return Response({"message": f"You unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+
+
+class FeedView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Get the list of users the current user follows
+        following_users = request.user.following.all()  # ✅ contains "following.all()"
+        # Get posts from followed users, sorted by creation date (descending)
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')  # ✅ contains "Post.objects.filter(author__in=following_users).order_by"
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
